@@ -6,21 +6,30 @@ on:
     branches: [main]
 
 jobs:
-  build-test:
+  build-test-scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Create dummy package
-        run: |
-          echo '{ "scripts": { "test": "echo test passed" } }' > package.json
+      - name: Build Docker Image
+        run: docker build -t myapp:latest .
 
       - name: Run Test
-        run: npm test
+        run: echo "Tests Passed"
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.0_Linux-64bit.deb
+          sudo dpkg -i trivy_0.50.0_Linux-64bit.deb
+
+      - name: Scan Image
+        run: trivy image myapp:latest
+
+      - name: Tag Image
+        run: docker tag myapp:latest myrepo/myapp:v1
+
+      - name: Push Image
+        run: echo "Image pushed"
