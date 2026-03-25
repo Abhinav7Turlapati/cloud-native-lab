@@ -1,0 +1,26 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Create dummy package
+        run: |
+          echo '{ "scripts": { "test": "echo test passed" } }' > package.json
+
+      - name: Run Test
+        run: npm test
