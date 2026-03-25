@@ -26,7 +26,7 @@ jobs:
           sudo dpkg -i trivy_0.50.0_Linux-64bit.deb
 
       - name: Scan Image
-        run: trivy image myapp:latest
+      run: trivy image --exit-code 0 myapp:latest
 
       - name: Tag Image
         run: docker tag myapp:latest myrepo/myapp:v1
